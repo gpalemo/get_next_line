@@ -6,7 +6,7 @@
 /*   By: cmauley <cmauley@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 20:25:36 by cmauley           #+#    #+#             */
-/*   Updated: 2025/11/05 21:08:25 by cmauley          ###   ########.fr       */
+/*   Updated: 2025/11/06 19:10:25 by cmauley          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 int	main()
 {
 	int	fd;
+	int	i;
 	char	*line;
 	
 	fd = open ("test.txt", O_RDONLY);
@@ -26,12 +27,14 @@ int	main()
 		printf("error\n");
 		return (-1);
 	}
+	i = 1;
 	line = get_next_line(fd);
 	while (line != NULL)
 	{
-		printf("%s", line);
+		printf("CALL %d : [%s]\n", i, line);
 		free(line);
 		line = get_next_line(fd);
+		i++;
 	}
 	close(fd);
 	return (0);
