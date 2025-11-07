@@ -6,36 +6,48 @@
 /*   By: cmauley <cmauley@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 20:34:17 by cmauley           #+#    #+#             */
-/*   Updated: 2025/11/06 21:29:22 by cmauley          ###   ########.fr       */
+/*   Updated: 2025/11/07 17:10:24 by cmauley          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+static char	*append_buffer(char *line, char *buffer)
+{
+	char	*tmp;
+	
+	if (!line)
+		return (ft_strdup(buffer));
+	else
+	{
+		tmp = ft_strjoin(line, buffer);
+		free (line);
+		return (tmp);
+	}
+	
+}
+
 static char	*fill_line_buffer(int fd, char *left_c, char *buffer)
 {
 	char	*line;
-	char	*tmp;
 	int		b_read;
 
 	line = NULL;
-	if (left_c != NULL)
+	if (left_c)
 		line = ft_strdup(left_c);
 	b_read = read(fd, buffer, BUFFER_SIZE);
 	while (b_read > 0)
 	{
 		buffer[b_read] = '\0';
-		if (!line)
-			line = ft_strdup(buffer);
-		else
-		{
-			tmp = ft_strjoin(line, buffer);
-			free (line);
-			line = tmp;
-		}
+		line = append_buffer(line, buffer);
 		if (!line || ft_strchr(line, '\n'))
 			break ;
 		b_read = read(fd, buffer, BUFFER_SIZE);
+	}
+	if (b_read < 0)
+	{
+		free(line);
+		return (NULL);
 	}
 	return (line);
 }
@@ -77,11 +89,13 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line = fill_line_buffer(fd, left_c, buffer);
 	free (buffer);
-	free (left_c);
 	if (!line)
-		left_c = NULL;
+	{
 		free (left_c);
+		left_c = NULL;
 		return (NULL);
+	}
+	free(left_c);
 	left_c = set_line(line);
 	return (line);
 }
