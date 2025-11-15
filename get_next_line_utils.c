@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmauley <cmauley@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/05 20:09:40 by cmauley           #+#    #+#             */
-/*   Updated: 2025/11/05 20:22:47 by cmauley          ###   ########.fr       */
+/*   Created: 2025/11/13 16:13:25 by cmauley           #+#    #+#             */
+/*   Updated: 2025/11/15 18:28:12 by cmauley          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,97 +17,73 @@ size_t	ft_strlen(const char *str)
 	size_t	i;
 
 	i = 0;
-	while (str[i])
+	if (!str)
+		return(0);
+	while (str && str[i])
 	{
 		i++;
 	}
 	return (i);
 }
 
-char	*ft_strchr(const char *s, int c)
+char *gnl_strjoin(char const *s1, char const *s2)
 {
-	char	ch;
-
-	if (!s)
-		return (NULL);
-	ch = (char) c;
-	while (*s)
+	char *str;
+	int	len1;
+	int len2;
+	int i;
+	
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	i = 0;
+	str = malloc(sizeof(char) * (len1 + len2 + 1));
+	if (!str)
+		return(NULL);
+	while (i < len1)
 	{
-		if (*s == ch)
-			return ((char *)s);
-		s++;
+		str[i] = s1[i];
+		i++;
 	}
-	if (*s == ch)
-		return ((char *)s);
+	i = 0;
+	while(i < len2)
+	{
+		str[i + len1] = s2[i];
+		i++;
+	}
+	str[i + len1] = '\0';
+	free((void *)s1);
+	return (str);
+}
+
+char	*free_wrapper(char *str)
+{
+	free(str);
+	str = NULL;
 	return (NULL);
 }
-
-char	*ft_strjoin(const char *s1, const char *s2)
+char	*setup_stash(int fd, char *stash)
 {
-	size_t	j;
-	size_t	i;
-	char	*res;
+	ssize_t		lu;
+	char	*buff;
 
-	if (!s1 && !s2)
+	buff = malloc(BUFFER_SIZE + 1);
+	if (!buff)
 		return (NULL);
-	if (!s1)
-		return (ft_strdup(s2));
-	if (!s2)
-		return (ft_strdup(s1));
-	res = (char *) malloc((ft_strlen(s1) + ft_strlen(s2)) + 1);
-	if (!res)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[i])
-		res[j++] = s1[i++];
-	i = 0;
-	while (s2[i])
-		res[j++] = s2[i++];
-	res[j] = '\0';
-	return (res);
-}
-
-char	*ft_strdup(const char *s1)
-{
-	size_t	i;
-	char	*res;
-
-	i = 0;
-	res = (char *) malloc((ft_strlen(s1) + 1) * sizeof(char));
-	if (!res)
-		return (NULL);
-	while (s1[i])
+	lu = 1;
+	while (lu > 0 && !istherenl(stash))
 	{
-		res[i] = s1[i];
-		i++;
+		lu = read(fd, buff, BUFFER_SIZE);
+		if (lu <= 0)
+			break;
+		buff[lu] = '\0';
+		stash = gnl_strjoin(stash, buff);
+		if (!stash)
+			return (free_wrapper(buff));
 	}
-	res[i] = '\0';
-	return (res);
-}
-
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	char	*sub;
-	size_t	s_len;
-	size_t	i;
-
-	if (!s)
-		return (NULL);
-	s_len = ft_strlen(s);
-	if (start >= s_len)
-		return (ft_strdup(""));
-	if (start + len > s_len)
-		len = s_len - start;
-	sub = (char *)malloc(len + 1);
-	if (!sub)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		sub[i] = s[start + i];
-		i++;
-	}
-	sub[i] = '\0';
-	return (sub);
+	free(buff);
+	if (lu < 0)
+		return (free_wrapper(stash));
+	if (!stash || *stash == '\0')
+		return (free_wrapper(stash));
+	return (stash);
 }

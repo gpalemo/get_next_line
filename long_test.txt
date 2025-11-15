@@ -1,2 +1,0 @@
-Ceci est une ligne beaucoup plus longue que le BUFFER_SIZE pour vérifier que la lecture se fait sur plusieurs tours de read
-Et une deuxième ligne
