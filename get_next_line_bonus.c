@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmauley <cmauley@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/15 18:45:08 by cmauley           #+#    #+#             */
-/*   Updated: 2025/12/01 16:42:55 by cmauley          ###   ########.fr       */
+/*   Created: 2025/12/01 16:36:25 by cmauley           #+#    #+#             */
+/*   Updated: 2025/12/01 16:49:26 by cmauley          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	istherenl(char *str)
 {
@@ -93,23 +93,23 @@ static char	*cleanstash(char *stash)
 
 char	*get_next_line(int fd)
 {
-	static char	*stash;
+	static char	*stash[MAX_FD];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
 		return (NULL);
-	stash = setup_stash(fd, stash);
-	if (!stash || *stash == '\0')
+	stash[fd] = setup_stash(fd, stash[fd]);
+	if (!stash[fd] || *stash[fd] == '\0')
 	{
-		stash = free_wrapper(stash);
+		stash[fd] = free_wrapper(stash[fd]);
 		return (NULL);
 	}
-	line = extract_line(stash);
+	line = extract_line(stash[fd]);
 	if (!line)
 	{
-		stash = free_wrapper(stash);
+		stash[fd] = free_wrapper(stash[fd]);
 		return (NULL);
 	}
-	stash = cleanstash(stash);
+	stash[fd] = cleanstash(stash[fd]);
 	return (line);
 }

@@ -1,20 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmauley <cmauley@student.42lausanne.ch>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/13 16:13:36 by cmauley           #+#    #+#             */
-/*   Updated: 2025/12/01 16:35:37 by cmauley          ###   ########.fr       */
+/*   Created: 2025/12/01 16:37:09 by cmauley           #+#    #+#             */
+/*   Updated: 2025/12/01 16:40:28 by cmauley          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 5
+# endif
+
+# ifndef MAX_FD
+#  define MAX_FD 1024
 # endif
 
 # include <stdlib.h> // malloc, free
